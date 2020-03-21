@@ -5,8 +5,9 @@ const typeDefs = `
 type Query{
     greeting(name:String,position:String):String!
     me:User!
+    grades:[Int]!
     post:Post!
-    add(val1:Float!,val2:Float):Float!
+    add(numbers:[Int]):Float!
 }
 
 type User{
@@ -39,10 +40,16 @@ const resolvers = {
       return "hello";
     },
     add(parent, args, ctx, info) {
-      if (!args.val2) {
-        return args.val1 + 50;
+      let sum = 0;
+      if (args.numbers.length > 0) {
+        args.numbers.map(number => {
+          sum = sum + number;
+        });
       }
-      return args.val1 + args.val2;
+      return sum;
+    },
+    grades(parent, args, ctx, info) {
+      return [99, 80, 93];
     },
     me() {
       return {
