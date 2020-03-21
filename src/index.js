@@ -1,13 +1,28 @@
 import { GraphQLServer } from "graphql-yoga";
 
+// demo user data
+const users = [
+  { id: "1", name: "Samrth", email: "sam@gmail.com", age: 20 },
+  { id: "2", name: "Pragati", email: "pra@gmail.com", age: 30 },
+  { id: "3", name: "prashant", email: "prashantbhat@gmail.com" }
+];
+const posts = [
+  { id: "1", title: "my post 1", body: "my first post", published: true },
+  { id: "2", title: "my post 2", body: "my second post", published: true },
+  { id: "1", title: "my post 3", body: "my third post", published: false },
+  { id: "1", title: "my post 4", body: "my fourth post", published: true }
+];
+
 //Type Definations(application schema)
+// in array excalmation inside means  the arrays cannot be null an
 const typeDefs = `
 type Query{
-    greeting(name:String,position:String):String!
+   
     me:User!
-    grades:[Int]!
-    post:Post!
-    add(numbers:[Int]):Float!
+     post:Post!
+    users(query:String):[User!]!
+    posts(search:String):[Post!]!
+    
 }
 
 type User{
@@ -33,24 +48,7 @@ const resolvers = {
     // args operation args
     // ctx context data
     //info  operation info
-    greeting(parent, args, ctx, info) {
-      if (args.name) {
-        return `hello ! ${args.name} and you are hired as ${args.position}`;
-      }
-      return "hello";
-    },
-    add(parent, args, ctx, info) {
-      let sum = 0;
-      if (args.numbers.length > 0) {
-        args.numbers.map(number => {
-          sum = sum + number;
-        });
-      }
-      return sum;
-    },
-    grades(parent, args, ctx, info) {
-      return [99, 80, 93];
-    },
+
     me() {
       return {
         id: "abc123",
@@ -65,6 +63,26 @@ const resolvers = {
         body: "My own api",
         published: false
       };
+    },
+    users(parent, args, ctx, info) {
+      if (!args.query) {
+        return users;
+      }
+      return users.filter(user => {
+        return user.name.toLowerCase().includes(args.query.toLowerCase());
+      });
+    },
+    posts(parent, args, ctx, info) {
+      if (!args.search) {
+        return posts;
+      }
+
+      return posts.filter(post => {
+        return (
+          post.body.toLowerCase().includes(args.search.toLowerCase()) ||
+          post.title.toLowerCase().includes(args.search.toLowerCase())
+        );
+      });
     }
   }
 };
