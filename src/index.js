@@ -1,10 +1,41 @@
-// import myloc, { message, name, getGreeting } from "./myModule";
+import { GraphQLServer } from "graphql-yoga";
 
-// console.log(message);
-// console.log(getGreeting(name));
-// console.log(myloc);
+//Type Definations(application schema)
+const typeDefs = `
+type Query{
+    hello: String!,
+    name:String!,
+    location:String!,
+    bio:String!
+}
+`;
 
-import add, { sub } from "./math";
+//Resolvers (functions)
 
-console.log(add(2, 3));
-console.log(sub(7, 8));
+const resolvers = {
+  Query: {
+    hello() {
+      return "this is my first graphql query";
+    },
+    name() {
+      return "Prashant Bhat";
+    },
+    location() {
+      return "Bangalore";
+    },
+    bio() {
+      return "I am a  software programmer";
+    }
+  }
+};
+
+const server = new GraphQLServer({
+  typeDefs,
+  resolvers
+});
+const options = {
+  port: 3000
+};
+server.start(options, () => {
+  console.log("Server started");
+});
