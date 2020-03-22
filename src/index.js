@@ -29,7 +29,12 @@ const posts = [
     author: "3"
   }
 ];
-
+const comments = [
+  { id: "102", text: "comment1", author: "1" },
+  { id: "103", text: "comment2", author: "2" },
+  { id: "104", text: "comment3", author: "3" },
+  { id: "105", text: "commen41", author: "2" }
+];
 //Type Definations(application schema)
 // in array excalmation inside means  the arrays cannot be null an
 const typeDefs = `
@@ -37,8 +42,9 @@ type Query{
    
     me:User!
      post:Post!
-    users(query:String):[User!]!
+     users(query:String):[User!]!
     posts(search:String):[Post!]!
+    comments:[Comment!]!
     
 }
 
@@ -48,6 +54,7 @@ type User{
     email:String!
     age:Int
     posts:[Post!]!
+    comments:[Comment!]!
 
 }
 type Post{
@@ -58,10 +65,10 @@ type Post{
     author:User!
 }
 type Comment{
-  title:String
-  body:String
-  post:Post!
-  author:User!
+ id:ID!
+ text:String!
+ author:User!
+  
 }
 `;
 
@@ -108,8 +115,12 @@ const resolvers = {
           post.title.toLowerCase().includes(args.search.toLowerCase())
         );
       });
+    },
+    comments(parent, args, ctx, info) {
+      return comments;
     }
   },
+
   //  this  is for relationship between Post and user foreign key in types
   Post: {
     author(parent, args, ctx, info) {
@@ -121,6 +132,16 @@ const resolvers = {
   User: {
     posts(parent, ctx, args, info) {
       return posts.filter(post => post.author === parent.id);
+    },
+    comments(parent, ctx, args, info) {
+      return comments.filter(comment => comment.author === parent.id);
+    }
+  },
+  Comment: {
+    author(parent, ctc, args, info) {
+      return users.find(user => {
+        return user.id == parent.author;
+      });
     }
   }
 };
