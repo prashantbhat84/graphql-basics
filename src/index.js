@@ -7,10 +7,27 @@ const users = [
   { id: "3", name: "prashant", email: "prashantbhat@gmail.com" }
 ];
 const posts = [
-  { id: "1", title: "my post 1", body: "my first post", published: true },
-  { id: "2", title: "my post 2", body: "my second post", published: true },
-  { id: "1", title: "my post 3", body: "my third post", published: false },
-  { id: "1", title: "my post 4", body: "my fourth post", published: true }
+  {
+    id: "1",
+    title: "my post 1",
+    body: "my first post",
+    published: true,
+    author: "1"
+  },
+  {
+    id: "2",
+    title: "my post 2",
+    body: "my second post",
+    published: true,
+    author: "2"
+  },
+  {
+    id: "1",
+    title: "my post 3",
+    body: "my third post",
+    published: false,
+    author: "3"
+  }
 ];
 
 //Type Definations(application schema)
@@ -37,6 +54,7 @@ type Post{
     title:String!
     body:String!
     published:Boolean!
+    author:User!
 }
 `;
 
@@ -82,6 +100,14 @@ const resolvers = {
           post.body.toLowerCase().includes(args.search.toLowerCase()) ||
           post.title.toLowerCase().includes(args.search.toLowerCase())
         );
+      });
+    }
+  },
+  //  this  is for relationship between Post and user foreign key in types
+  Post: {
+    author(parent, args, ctx, info) {
+      return users.find(user => {
+        return user.id === parent.author;
       });
     }
   }
