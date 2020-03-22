@@ -19,7 +19,7 @@ const posts = [
     title: "my post 2",
     body: "my second post",
     published: true,
-    author: "2"
+    author: "1"
   },
   {
     id: "1",
@@ -47,6 +47,7 @@ type User{
     name:String!
     email:String!
     age:Int
+    posts:[Post!]!
 
 }
 type Post{
@@ -55,6 +56,12 @@ type Post{
     body:String!
     published:Boolean!
     author:User!
+}
+type Comment{
+  title:String
+  body:String
+  post:Post!
+  author:User!
 }
 `;
 
@@ -109,6 +116,11 @@ const resolvers = {
       return users.find(user => {
         return user.id === parent.author;
       });
+    }
+  },
+  User: {
+    posts(parent, ctx, args, info) {
+      return posts.filter(post => post.author === parent.id);
     }
   }
 };
