@@ -49,9 +49,20 @@ type Query{
     
 }
 type Mutation{
-  createUser(name:String! email:String! age:Int):User!
-  createPost(title:String! body:String! published:Boolean! author:ID!):Post!
+  createUser(data:createUserInput!):User!
+  createPost(data:createPostInput!):Post!
   createComment(text:String! author:ID! post:ID!):Comment!
+}
+input createUserInput{
+  name:String!
+  email:String!
+  age:Int
+}
+input createPostInput{
+  title:String!
+  body:String!
+  published:Boolean!
+  author:ID!
 }
 
 type User{
@@ -130,27 +141,27 @@ const resolvers = {
   },
   Mutation: {
     createUser(parent, args, ctx, info) {
-      const emailTaken = users.some(user => user.email === args.email);
+      const emailTaken = users.some(user => user.email === args.data.email);
       if (emailTaken) {
         throw new Error("Email Taken");
       }
       const { name, email, age } = args;
       const user = {
         id: uuidv4(),
-        ...args
+        ...args.data
       };
       users.push(user);
       return user;
     },
     createPost(parent, args, ctx, info) {
-      const { title, body, published, author } = args;
+      const { title, body, published, author } = args.data;
       const userExists = users.some(user => user.id === author);
       if (!userExists) {
         throw new Error("No User found");
       }
       const post = {
         id: uuidv4(),
-        ...args
+        ...args.data
       };
       posts.push(post);
       return post;
