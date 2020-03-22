@@ -50,6 +50,8 @@ type Query{
 }
 type Mutation{
   createUser(name:String! email:String! age:Int):User!
+  createPost(title:String! body:String! published:Boolean! author:ID!):Post!
+  createComment(text:String! author:ID! post:ID!):Comment!
 }
 
 type User{
@@ -135,16 +137,48 @@ const resolvers = {
       const { name, email, age } = args;
       const user = {
         id: uuidv4(),
-        name,
-        email,
-        age
+        ...args
       };
       users.push(user);
       return user;
+    },
+    createPost(parent, args, ctx, info) {
+      const { title, body, published, author } = args;
+      const userExists = users.some(user => user.id === author);
+      if (!userExists) {
+        throw new Error("No User found");
+      }
+      const post = {
+        id: uuidv4(),
+        ...args
+      };
+      posts.push(post);
+      return post;
+    },
+    createComment(parent, args, ctx, info) {
+      const { text, author, post } = args;
+      const userExists = users.some(user => user.id === author);
+      const postexists = posts.some(
+        post1 => post1.published === true && post1.id === post
+      );
+      console.log(postexists);
+      console.log(userExists);
+
+      if (!userExists || !postexists) {
+        throw new Error("Post/User does not exist");
+      }
+      const comment = {
+        id: uuidv4(),
+        ...args
+      };
+      comments.push(comment);
+      console.log(comments);
+
+      return comment;
     }
   },
 
-  //  this  is for relationship between Post and user foreign key in types
+  //  this  is for relationship between Post and user foreign key in types (queries/read)
   Post: {
     author(parent, args, ctx, info) {
       return users.find(user => {
@@ -180,7 +214,7 @@ const server = new GraphQLServer({
   resolvers
 });
 const options = {
-  port: 3000
+  port: 5000
 };
 server.start(options, () => {
   console.log("Server started");
