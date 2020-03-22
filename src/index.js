@@ -22,7 +22,7 @@ const posts = [
     author: "1"
   },
   {
-    id: "1",
+    id: "3",
     title: "my post 3",
     body: "my third post",
     published: false,
@@ -30,10 +30,10 @@ const posts = [
   }
 ];
 const comments = [
-  { id: "102", text: "comment1", author: "1" },
-  { id: "103", text: "comment2", author: "2" },
-  { id: "104", text: "comment3", author: "3" },
-  { id: "105", text: "commen41", author: "2" }
+  { id: "102", text: "comment1", author: "1", postid: "1" },
+  { id: "103", text: "comment2", author: "2", postid: "2" },
+  { id: "104", text: "comment3", author: "3", postid: "3" },
+  { id: "105", text: "commen41", author: "3", postid: "3" }
 ];
 //Type Definations(application schema)
 // in array excalmation inside means  the arrays cannot be null an
@@ -63,11 +63,13 @@ type Post{
     body:String!
     published:Boolean!
     author:User!
+    comments:[Comment!]!
 }
 type Comment{
  id:ID!
  text:String!
  author:User!
+ post:Post!
   
 }
 `;
@@ -127,6 +129,9 @@ const resolvers = {
       return users.find(user => {
         return user.id === parent.author;
       });
+    },
+    comments(parent, ctx, args, info) {
+      return comments.filter(comment => comment.postid === parent.id);
     }
   },
   User: {
@@ -138,10 +143,13 @@ const resolvers = {
     }
   },
   Comment: {
-    author(parent, ctc, args, info) {
+    author(parent, ctx, args, info) {
       return users.find(user => {
         return user.id == parent.author;
       });
+    },
+    post(parent, args, ctx, info) {
+      return posts.find(post => post.id === parent.postid);
     }
   }
 };
