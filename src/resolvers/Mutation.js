@@ -48,10 +48,30 @@ const Mutation = {
     db.posts.push(post);
     return post;
   },
-  createComment(parent, args, ctx, info) {
+  updatePost(parent, args, { db }, info) {
+    const { id, data } = args;
+    const userexists = db.posts.find(post => post.id === id);
+    console.log(userexists);
+
+    if (!userexists) {
+      throw new Error("No post found");
+    }
+    if (typeof data.title === "string") {
+      userexists.title = data.title;
+    }
+    if (typeof data.body === "string") {
+      userexists.body = data.body;
+    }
+    if (typeof data.published === "boolean") {
+      userexists.published = data.published;
+    }
+
+    return userexists;
+  },
+  createComment(parent, args, { db }, info) {
     const { text, author, post } = args;
-    const userExists = users.some(user => user.id === author);
-    const postexists = posts.some(
+    const userExists = db.users.some(user => user.id === author);
+    const postexists = db.posts.some(
       post1 => post1.published === true && post1.id === post
     );
     console.log(postexists);
@@ -64,8 +84,8 @@ const Mutation = {
       id: uuidv4(),
       ...args
     };
-    comments.push(comment);
-    console.log(comments);
+    db.comments.push(comment);
+    console.log(db.comments);
 
     return comment;
   },
