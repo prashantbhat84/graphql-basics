@@ -1,9 +1,15 @@
 const subscription = {
   count: {
-    subscribe(parent, ctx, args, info) {
-      const { pubsub } = ctx;
+    subscribe(parent, args, { pubsub }, info) {
       let count = 0;
+      setInterval(() => {
+        count++;
+        console.log(count);
 
+        pubsub.publish("count", {
+          count
+        });
+      }, 1000);
       return pubsub.asyncIterator("count");
     }
   }

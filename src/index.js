@@ -15,10 +15,10 @@ const server = new GraphQLServer({
   resolvers: {
     Query,
     Mutation,
+    Subscription,
     User,
     Comment,
-    Post,
-    Subscription
+    Post
   },
   context: {
     db,
