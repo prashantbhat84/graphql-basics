@@ -1,18 +1,4 @@
 const subscription = {
-  count: {
-    subscribe(parent, args, { pubsub }, info) {
-      let count = 0;
-      setInterval(() => {
-        count++;
-        console.log(count);
-
-        pubsub.publish("count", {
-          count
-        });
-      }, 1000);
-      return pubsub.asyncIterator("count");
-    }
-  },
   comment: {
     subscribe(parent, { postid }, { pubsub, db }, info) {
       const post = db.posts.find(post => post.id === postid && post.published);
