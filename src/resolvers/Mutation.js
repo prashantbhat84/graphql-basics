@@ -112,6 +112,17 @@ const Mutation = {
     console.log(db.comments);
 
     return comment;
+  },
+  deleteComment(parent, args, { db }, info) {
+    const verifyComment = db.comments.findIndex(
+      comment => comment.id === args.id
+    );
+    if (verifyComment === -1) {
+      throw new Error("Comment does not exist");
+    }
+    const deletedComment = db.comments.splice(verifyComment, 1);
+
+    return deletedComment[0];
   }
 };
 export { Mutation as default };

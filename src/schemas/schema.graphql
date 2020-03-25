@@ -12,8 +12,8 @@ type Mutation {
   createPost(data: createPostInput!): Post!
   updatePost(id: ID!, data: updatePostInput): Post!
   deletePost(id: ID!): Post!
-
   createComment(text: String!, author: ID!, post: ID!): Comment!
+  deleteComment(id: ID!): Comment!
 }
 type Subscription {
   count: Int!
