@@ -14,6 +14,7 @@ type Mutation {
   deletePost(id: ID!): Post!
   createComment(text: String!, author: ID!, post: ID!): Comment!
   deleteComment(id: ID!): Comment!
+  updateComment(id: ID!, data: updateCommentInput): Comment!
 }
 type Subscription {
   count: Int!
@@ -38,6 +39,9 @@ input updatePostInput {
   title: String
   body: String
   published: Boolean
+}
+input updateCommentInput {
+  text: String
 }
 
 type User {

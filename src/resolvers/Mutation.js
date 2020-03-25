@@ -123,6 +123,18 @@ const Mutation = {
     const deletedComment = db.comments.splice(verifyComment, 1);
 
     return deletedComment[0];
+  },
+  updateComment(parent, args, { db }, info) {
+    const { id, data } = args;
+    const verifyComment = db.comments.find(comment => comment.id === id);
+    if (!verifyComment) {
+      throw new Error("Comment does not exist");
+    }
+
+    if (typeof data.text === "string") {
+      verifyComment.text = data.text;
+    }
+    return verifyComment;
   }
 };
 export { Mutation as default };
