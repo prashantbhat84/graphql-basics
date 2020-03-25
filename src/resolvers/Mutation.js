@@ -35,6 +35,21 @@ const Mutation = {
     }
     return userExists;
   },
+  deleteUser(parent, args, { db }, info) {
+    const user = db.users.findIndex(user => user.id === args.id);
+    if (user === -1) {
+      throw new Error("No user exists");
+    }
+    const deletedUser = db.users.splice(user, 1);
+    posts = db.posts.filter(post => post.author !== args.id); // comments to be deleted later after response from andrew
+    // posts = posts.filter(post => {
+    //   const match = post.filter === args.id;
+    //   if (match) {
+    //     comments = comments.filter(comment => comment.post !== post.id);
+    //   }
+    // });
+    return deletedUser[0];
+  },
   createPost(parent, args, { db }, info) {
     const { title, body, published, author } = args.data;
     const userExists = db.users.some(user => user.id === author);
@@ -74,8 +89,6 @@ const Mutation = {
     const postexists = db.posts.some(
       post1 => post1.published === true && post1.id === post
     );
-    console.log(postexists);
-    console.log(userExists);
 
     if (!userExists || !postexists) {
       throw new Error("Post/User does not exist");
@@ -88,21 +101,6 @@ const Mutation = {
     console.log(db.comments);
 
     return comment;
-  },
-  deleteUser(parent, args, { db }, info) {
-    const user = db.users.findIndex(user => user.id === args.id);
-    if (user === -1) {
-      throw new Error("No user exists");
-    }
-    const deletedUser = db.users.splice(user, 1);
-    posts = db.posts.filter(post => post.author !== args.id); // comments to be deleted later after response from andrew
-    // posts = posts.filter(post => {
-    //   const match = post.filter === args.id;
-    //   if (match) {
-    //     comments = comments.filter(comment => comment.post !== post.id);
-    //   }
-    // });
-    return deletedUser[0];
   }
 };
 export { Mutation as default };

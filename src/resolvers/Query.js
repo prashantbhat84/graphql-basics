@@ -14,12 +14,11 @@ const Query = {
       published: false
     };
   },
-  users(parent, args, ctx, info) {
-    const { users } = ctx.db;
+  users(parent, args, { db }, info) {
     if (!args.query) {
-      return users;
+      return db.users;
     }
-    return users.filter(user => {
+    return db.users.filter(user => {
       return user.name.toLowerCase().includes(args.query.toLowerCase());
     });
   },

@@ -27,10 +27,10 @@ let posts = [
   }
 ];
 let comments = [
-  { id: "102", text: "comment1", author: "1", postid: "1" },
-  { id: "103", text: "comment2", author: "2", postid: "2" },
-  { id: "104", text: "comment3", author: "3", postid: "3" },
-  { id: "105", text: "commen41", author: "3", postid: "3" }
+  { id: "102", text: "comment1", author: "1", post: "1" },
+  { id: "103", text: "comment2", author: "2", post: "2" },
+  { id: "104", text: "comment3", author: "3", post: "3" },
+  { id: "105", text: "commen41", author: "3", post: "3" }
 ];
 const db = {
   users,
