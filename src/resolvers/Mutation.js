@@ -85,6 +85,15 @@ const Mutation = {
 
     return userexists;
   },
+  deletePost(parent, args, { db }, info) {
+    const verifyPost = db.posts.findIndex(post => post.id === args.id);
+    if (verifyPost === -1) {
+      throw new Error("No Post exists");
+    }
+    const deletedPost = db.posts.splice(verifyPost, 1);
+    db.comments = db.comments.filter(comment => comment.post !== args.id);
+    return deletedPost[0];
+  },
   createComment(parent, args, { db }, info) {
     const { text, author, post } = args;
     const userExists = db.users.some(user => user.id === author);
