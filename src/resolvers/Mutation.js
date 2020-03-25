@@ -41,13 +41,15 @@ const Mutation = {
       throw new Error("No user exists");
     }
     const deletedUser = db.users.splice(user, 1);
-    posts = db.posts.filter(post => post.author !== args.id); // comments to be deleted later after response from andrew
-    // posts = posts.filter(post => {
-    //   const match = post.filter === args.id;
-    //   if (match) {
-    //     comments = comments.filter(comment => comment.post !== post.id);
-    //   }
-    // });
+    db.posts = db.posts.filter(post => {
+      const match = post.author === args.id;
+      if (match) {
+        db.comments = db.comments.filter(comment => comment.post !== post.id);
+      }
+      return !match;
+    });
+    db.comments = db.comments.filter(comment => comment.author !== args.id);
+
     return deletedUser[0];
   },
   createPost(parent, args, { db }, info) {
