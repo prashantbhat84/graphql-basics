@@ -16,7 +16,7 @@ let posts = [
     title: "my post 2",
     body: "my second post",
     published: true,
-    author: "1"
+    author: "3"
   },
   {
     id: "3",
@@ -28,7 +28,7 @@ let posts = [
 ];
 let comments = [
   { id: "102", text: "comment1", author: "1", post: "1" },
-  { id: "103", text: "comment2", author: "2", post: "2" },
+  { id: "103", text: "comment2", author: "1", post: "2" },
   { id: "104", text: "comment3", author: "3", post: "3" },
   { id: "105", text: "commen41", author: "3", post: "3" }
 ];
