@@ -65,15 +65,18 @@ const Mutation = {
     db.posts.push(post);
     if (published) {
       pubsub.publish("post", {
-        createPost: post
+        post: {
+          mutation: "CREATED",
+          data: post
+        }
       });
     }
     return post;
   },
-  updatePost(parent, args, { db }, info) {
+  updatePost(parent, args, { db, pubsub }, info) {
     const { id, data } = args;
     const userexists = db.posts.find(post => post.id === id);
-    console.log(userexists);
+    const originalPost = { ...userexists };
 
     if (!userexists) {
       throw new Error("No post found");
@@ -87,17 +90,53 @@ const Mutation = {
     if (typeof data.published === "boolean") {
       userexists.published = data.published;
     }
+    if (originalPost.published && !userexists.published) {
+      //deleted
+      pubsub.publish("post", {
+        post: {
+          mutation: "DELETED",
+          data: originalPost
+        }
+      });
+    } else if (!originalPost.published && userexists.published) {
+      //created
+      pubsub.publish("post", {
+        post: {
+          mutation: "CREATED",
+          data: userexists
+        }
+      });
+    } else if (userexists.published) {
+      //updated
+      pubsub.publish("post", {
+        post: {
+          mutation: "UPDATED",
+          data: userexists
+        }
+      });
+    }
 
     return userexists;
   },
-  deletePost(parent, args, { db }, info) {
+  deletePost(parent, args, { db, pubsub }, info) {
     const verifyPost = db.posts.findIndex(post => post.id === args.id);
     if (verifyPost === -1) {
       throw new Error("No Post exists");
     }
-    const deletedPost = db.posts.splice(verifyPost, 1);
+
+    const [deletedPost] = db.posts.splice(verifyPost, 1);
+
     db.comments = db.comments.filter(comment => comment.post !== args.id);
-    return deletedPost[0];
+    if (deletedPost.published) {
+      pubsub.publish("post", {
+        post: {
+          mutation: "DELETED",
+          data: deletedPost
+        }
+      });
+    }
+
+    return deletedPost;
   },
   createComment(parent, args, { db, pubsub }, info) {
     const { text, author, post } = args;

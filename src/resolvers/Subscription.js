@@ -9,7 +9,7 @@ const subscription = {
       return pubsub.asyncIterator(`comment ${postid}`);
     }
   },
-  createPost: {
+  post: {
     subscribe(parent, args, { pubsub }, info) {
       return pubsub.asyncIterator("post");
     }
