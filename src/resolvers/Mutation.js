@@ -155,7 +155,7 @@ const Mutation = {
     db.comments.push(comment);
     pubsub.publish(`comment ${post}`, {
       comment: {
-        mutation: "Create",
+        mutation: "CREATED",
         data: comment
       }
     });
@@ -192,7 +192,7 @@ const Mutation = {
     }
     pubsub.publish(`comment ${verifyComment.post}`, {
       comment: {
-        mutation: "UPDATE",
+        mutation: "UPDATED",
         data: verifyComment
       }
     });
